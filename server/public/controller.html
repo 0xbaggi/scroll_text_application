@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Controller</title>
+    <link rel="stylesheet" href="./styles/controller.css">
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Trumbowyg scripts and styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/ui/trumbowyg.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/trumbowyg.min.js"></script>
+    <!-- Include Trumbowyg color picker plugin -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/plugins/colors/ui/trumbowyg.colors.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/plugins/colors/trumbowyg.colors.min.js"></script>
+    <!-- Include Trumbowyg table plugin -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/plugins/table/ui/trumbowyg.table.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/plugins/table/trumbowyg.table.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+</head>
+<style>
+    html, body {
+        margin: 0;
+        height: 100%;
+        overflow-y: hidden;
+    }
+
+    #trumbowyg-editor, .trumbowyg-box, .trumbowyg-editor {
+        height: 100%; 
+        width: 100%;
+        background-color: #ffffff; 
+    }
+
+    .trumbowyg-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    
+</style>
+<body>
+    <!-- Placeholder for Trumbowyg -->
+    <textarea id="trumbowyg-editor" oninput="sendContent()"></textarea>
+
+    <!-- Include Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+        socket.emit('identify', '/controller');
+        let isMarqueeApplied = false; 
+
+        // Initialize Trumbowyg with color picker and table plugin
+        $(document).ready(function() {
+            $('#trumbowyg-editor').trumbowyg({
+                btnsDef: {
+                    // Create a new dropdown
+                    resetPosition: {
+                        fn: function() {
+                            socket.emit('resetPosition', {x: 0, y: 0});
+                        },
+                        tag: 'resetPosition',
+                        title: 'Reset Position',
+                        text: 'Reset Position', 
+                        class: 'trumbowyg-button', 
+                        hasIcon: false 
+                    },
+                    scrollText: {
+                        fn: function() {
+                            applyScrollAnimation();
+                        },
+                        tag: 'scrollText',
+                        title: 'Start/Stop Scroll',
+                        text: 'Start/Stop Scroll', 
+                        class: 'trumbowyg-button', 
+                        hasIcon: false 
+                    }
+                },
+                // Trumbowyg configurations
+                btns: [
+                    ['viewHTML'],
+                    ['formatting'],
+                    ['strong', 'em', 'del'],
+                    ['superscript', 'subscript'],
+                    ['insertImage'],
+                    ['foreColor', 'backColor'],
+                    ['table'], 
+                    ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+                    ['unorderedList', 'orderedList'],
+                    ['horizontalRule'],
+                    ['resetPosition'],
+                    ['scrollText'],
+                ],
+
+            }).on('tbwchange tbwblur', sendContent)
+        });
+        
+        function applyScrollAnimation() {
+            var editorContent = $('#trumbowyg-editor').trumbowyg('html');
+            var tempDiv = $('<div>').html(editorContent); // Create a temporary div to parse the HTML
+
+            if (!isMarqueeApplied) {
+                // Apply marquee if it's not already applied
+                var marqueeText = '<marquee behavior="scroll" direction="right">' + editorContent + '</marquee>';
+                $('#trumbowyg-editor').trumbowyg('html', marqueeText);
+                isMarqueeApplied = true;
+            } else {
+                // Remove marquee if it's already applied
+                var marqueeContent = tempDiv.find('marquee').html(); // Find the marquee tag and get its content
+                if (marqueeContent) {
+                    $('#trumbowyg-editor').trumbowyg('html', marqueeContent);
+                }
+                isMarqueeApplied = false;
+            }
+            sendContent();
+        }
+
+        // Function to send content
+        function sendContent() {
+            const content = $('#trumbowyg-editor').trumbowyg('html');
+            const tempDiv = $('<div>').css({
+                display: 'inline-block',
+                position: 'absolute',
+                visibility: 'hidden',
+                maxWidth: '100%'
+            }).html(content).appendTo('body');
+
+            const contentSize = {
+                width: tempDiv.width(),
+                height: tempDiv.height()
+            };
+
+            tempDiv.remove();
+
+            socket.emit('sendHtmlContent', { content, size: contentSize });
+        }
+    </script>
+    </body>
+</html>
+

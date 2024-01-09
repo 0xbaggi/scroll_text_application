@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trackpad</title>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+
+</head>
+
+<style>
+    #trackpad {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #424242FF;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        touch-action: none;
+    }
+
+</style>
+
+<body>
+    <div id="trackpad"></div>
+    
+    <script>
+        const socket = io();
+        socket.emit('identify', '/trackpad');
+
+        const trackpad = document.getElementById('trackpad'); 
+        trackpad.addEventListener('pointermove', (event) => { 
+                const movementX = event.movementX;
+                const movementY = event.movementY;
+                socket.emit('moveContent', { movementX, movementY });            
+        });
+        
+    </script>
+</body>
+</html>

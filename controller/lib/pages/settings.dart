@@ -18,8 +18,6 @@ class _SettingsPageState extends State<SettingsPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController servicePortController = TextEditingController();
 
-  late int nScreens;
-
   bool _obscurePassword = true;
 
   @override
@@ -28,10 +26,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
     // Set default values
     ipController.text = '192.168.1.86';
-    portController.text = '2222';
+    portController.text = '22';
     userController.text = 'lg';
-    passwordController.text = 'toor';
-    nScreens = 3;
+    passwordController.text = 'passw';
     servicePortController.text = Const.servicePort;
   }
 

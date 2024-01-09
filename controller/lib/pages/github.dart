@@ -25,7 +25,7 @@ class _GithubPageState extends State<GithubPage> {
         ),
       )
       ..loadRequest(
-        Uri.parse("https://github.com/0xbaggi/sossoldi"),
+        Uri.parse("https://github.com/0xbaggi/scroll_text_application"),
       );
     super.initState();
   }

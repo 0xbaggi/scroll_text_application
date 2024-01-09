@@ -5,7 +5,7 @@
 <img src="./assets/app_logo.png" width="50%">
 </p>
 
-Scroll Text is an app designed to display different types of content (like text, images, videos, and more) on Liquid Galaxy screens. This project has two main parts: a service running on the master and an application installed on the tablet. They communicate with each other using SSH and web pages.
+Scroll Text is an app designed to display different types of content (like text, images, videos, and more) on Liquid Galaxy screens. This project has two main parts: a service running on the master and an application installed on the tablet. They communicate with each other using SSH and web pages. The service files can be found in the  [server folder](https://github.com/0xbaggi/scroll_text_application/tree/main/server), and the Flutter application can be found in the [controller  folder](https://github.com/0xbaggi/scroll_text_application/tree/main/controller).
 
 ## 📝 Before Running
 
@@ -53,7 +53,7 @@ bash install.sh {port} {password}
 After installation, reboot the machine.
 
 ## 📱 App Setup
-
+Install the [apk](https://github.com/0xbaggi/scroll_text_application/blob/main/app-release.apk) on the tablet. 
 With the server running, ensure the Android device and Liquid Galaxy are on the **same wi-fi** network before running the app. Then, the setup is simple.
 
 - First, open the app and go to the settings page.

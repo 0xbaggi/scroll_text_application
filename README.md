@@ -70,4 +70,4 @@ With the server running, ensure the Android device and Liquid Galaxy are on the 
 ## 🛠️ Tested on 
 - Ubuntu: 16.04
 - Node: 14.21
-- Andorid: 11 (API 30)
+- Android: 11 (API 30)

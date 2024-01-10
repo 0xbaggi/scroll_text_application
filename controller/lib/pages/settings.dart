@@ -57,6 +57,7 @@ class _SettingsPageState extends State<SettingsPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
+              FocusScope.of(context).unfocus();
               Navigator.pushNamed(context, '/home');
             },
           ),

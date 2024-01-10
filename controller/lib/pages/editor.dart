@@ -39,7 +39,9 @@ class _EditorPageState extends State<EditorPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
+          onPressed: ()  async {
+            controller.runJavaScript("document.activeElement.blur();");
+            await Future.delayed(const Duration(milliseconds: 700));
             Navigator.pop(context);
           },
         ),

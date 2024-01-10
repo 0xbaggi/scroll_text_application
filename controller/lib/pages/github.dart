@@ -41,7 +41,9 @@ class _GithubPageState extends State<GithubPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
+          onPressed: () async {
+            controller.runJavaScript("document.activeElement.blur();");
+            await Future.delayed(const Duration(milliseconds: 800));
             Navigator.pop(context);
           },
         ),

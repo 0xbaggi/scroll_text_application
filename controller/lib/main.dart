@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:liquid_galaxy_controller/pages/splash_screen.dart';
 import 'pages/editor.dart';
 import 'pages/github.dart';
 import 'pages/info.dart';
@@ -33,8 +34,9 @@ class _RootState extends State<Root> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home',
+      initialRoute: '/splash',
       routes: {
+        '/splash': (context) => const SplashPage(),
         '/home': (context) => const Home(),
         '/settings': (context) => const SettingsPage(),
         '/controller': (context) => const EditorPage(),

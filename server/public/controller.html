@@ -14,8 +14,12 @@
     <!-- Include Trumbowyg table plugin -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/plugins/table/ui/trumbowyg.table.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/plugins/table/trumbowyg.table.min.js"></script>
+    <!-- Include jQuery UI for modal dialog -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 </head>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.25.1/plugins/fontsize/trumbowyg.fontsize.min.js"></script>
 
 <style>
@@ -44,6 +48,11 @@
     <!-- Placeholder for Trumbowyg -->
     <textarea id="trumbowyg-editor" oninput="sendContent()"></textarea>
 
+    <div id="speedDialog" title="Change Scroll Speed" style="display:none;">
+        <p>Enter new scroll speed (higher number = faster speed):</p>
+        <input type="text" id="newSpeedValue" value="5"/>
+    </div>
+
     <!-- Include Socket.IO -->
     <script src="/socket.io/socket.io.js"></script>
 
@@ -64,7 +73,7 @@
                         tag: 'resetPosition',
                         title: 'Reset Position',
                         text: 'Reset Position', 
-                        class: 'trumbowyg-button', 
+                        class: 'trumbowyg-button',  
                         hasIcon: false 
                     },
                     scrollText: {
@@ -74,6 +83,16 @@
                         tag: 'scrollText',
                         title: 'Start/Stop Scroll',
                         text: 'Start/Stop Scroll', 
+                        class: 'trumbowyg-button', 
+                        hasIcon: false 
+                    },
+                    scrollSpeed: {
+                        fn: function() {
+                            changeMarqueeSpeed();
+                        },
+                        tag: 'scrollSpeed',
+                        title: 'Scroll speed',
+                        text: 'Scroll speed', 
                         class: 'trumbowyg-button', 
                         hasIcon: false 
                     }
@@ -93,6 +112,7 @@
                     ['horizontalRule'],
                     ['resetPosition'],
                     ['scrollText'],
+                    ['scrollSpeed'],
                 ],
 
             }).on('tbwchange tbwblur', sendContent)
@@ -100,16 +120,15 @@
         
         function applyScrollAnimation() {
             var editorContent = $('#trumbowyg-editor').trumbowyg('html');
-            var tempDiv = $('<div>').html(editorContent); // Create a temporary div to parse the HTML
+            var tempDiv = $('<div>').html(editorContent);
 
             if (!isMarqueeApplied) {
-                // Apply marquee if it's not already applied
-                var marqueeText = '<marquee behavior="scroll" direction="right">' + editorContent + '</marquee>';
+                // Include scrolldelay attribute with a default value
+                var marqueeText = '<marquee behavior="scroll" direction="right" scrolldelay="1" scrollamount="5">' + editorContent + '</marquee>';
                 $('#trumbowyg-editor').trumbowyg('html', marqueeText);
                 isMarqueeApplied = true;
             } else {
-                // Remove marquee if it's already applied
-                var marqueeContent = tempDiv.find('marquee').html(); // Find the marquee tag and get its content
+                var marqueeContent = tempDiv.find('marquee').html();
                 if (marqueeContent) {
                     $('#trumbowyg-editor').trumbowyg('html', marqueeContent);
                 }
@@ -136,6 +155,30 @@
             tempDiv.remove();
 
             socket.emit('sendHtmlContent', { content, size: contentSize });
+        }
+
+        function changeMarqueeSpeed() {
+            $("#speedDialog").dialog({
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Change Speed": function() {
+                        var newSpeed = $("#newSpeedValue").val();
+                        if (newSpeed != null) {
+                            var editorContent = $('#trumbowyg-editor').trumbowyg('html');
+                            var updatedContent = editorContent.replace(/scrollamount="\d+"/, 'scrollamount="' + newSpeed + '"');
+                            $('#trumbowyg-editor').trumbowyg('html', updatedContent);
+                            sendContent();
+                        }
+                        $(this).dialog("close");
+                    },
+                    Cancel: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
         }
     </script>
     </body>

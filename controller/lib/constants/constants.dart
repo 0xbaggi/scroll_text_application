@@ -31,4 +31,9 @@ class Const {
     color: superlightGrey,
     fontSize: 50,
   );
+
+  static TextStyle splashSimpleText = TextStyle(
+    color: superlightGrey,
+    fontSize: 20,
+  );
 }
